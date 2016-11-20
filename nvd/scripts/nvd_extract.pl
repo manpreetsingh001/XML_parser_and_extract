@@ -17,13 +17,11 @@ if (@ARGV != 1) {
         "Usage:\n    $0 <NVD_XML_files>\n\n";
 }
 
-foreach $a  (@ARGV){
-
-#print "$a "
-
-my %vuln = NVD::extract($a);
-Dumpvalue->new->dumpValue(\%vuln);
-
+foreach my $file  (@ARGV){
+ #print "$a"
+ die "No file $file " if not -e $file;
+ my %vuln = NVD::extract($file);
+ Dumpvalue->new->dumpValue(\%vuln);
 }
 
 
