@@ -20,7 +20,7 @@ sub extract {
     my $xml = XML::LibXML->load_xml(location => $fname);
     my( $nvd ) = $xml->nonBlankChildNodes;
 
-    my @vuln;
+    my %vuln;
     for my $entry ($nvd->nonBlankChildNodes) {
         my %value;
        # %value = parse_nvd_entry($entry);
