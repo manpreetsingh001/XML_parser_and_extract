@@ -11,7 +11,6 @@ use warnings;
 
 use XML::LibXML;
 
-
 sub extract {
     my $fname = shift
         or warn("please provide the XML file to load\n"),
@@ -92,6 +91,5 @@ sub parse_nvd_entry {
 
     return %entry;
 }
-
 
 1;
