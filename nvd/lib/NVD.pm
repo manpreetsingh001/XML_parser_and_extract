@@ -8,7 +8,7 @@ package NVD;
 
 use strict;
 use warnings;
-
+use DBI; 
 use XML::LibXML;
 
 sub extract {
@@ -37,6 +37,36 @@ sub extract {
     return %vuln;
 }
 
+sub save2db{
+   #saving data in a mysql database
+   my $data = $_[0];
+   my $db_cred = $_[1];
+
+   #db connection
+   my $dbh = DBI->connect($db_cred, "root", "root" ) or die $DBI::errstr;
+   my $ddl = (
+   #create extract table
+            "CREATE TABLE IF NOT EXISTS extract (cve_id varchar(255) NOT NULL PRIMARY KEY, severity VARCHAR(255) ,published VARCHAR(255),modified varchar(255))");
+   $dbh->do($ddl);
+
+   #insert values into table
+   my $sql ='INSERT INTO extract
+                       (cve_id,severity,published,modified)
+                        values
+                      (?,?,?,?)';
+   my $sth = $dbh->prepare($sql);
+
+   #extracting required values from hash
+   my @cve_list;
+   for my $cve (keys %$data){
+     push @cve_list, [$cve, $data->{$cve}{severity},$data->{$cve}{published},$data->{$cve}{modified}];
+  }
+   print "Saving data into a db.......\n";
+   for (@cve_list) {
+     $sth->execute($_->[0], $_->[1], $_->[2] ,$_->[3]);
+     #print "$_->[0] $_->[1] $_->[2] $_->[3]\n"
+   }
+}
 
 sub parse_nvd_entry {
     my $entry = shift;
